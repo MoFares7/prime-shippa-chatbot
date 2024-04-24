@@ -1,0 +1,214 @@
+import React, { useState } from 'react';
+import { Box, Typography, Avatar } from '@mui/material';
+import colors from '../../../../assets/theme/base/colors';
+import typography from '../../../../assets/theme/base/typography';
+import logo from '../../../../assets/images/logo-ct.png';
+import MainButton from '../components/main_button';
+import Header from '../components/header';
+import Lottie from 'lottie-react';
+import animationData from '../../../../assets/lottie/bot.json';
+import LoaderCard from '../../../../components/loader';
+
+function ChatBot() {
+        const [showQuestions, setShowQuestions] = useState(false);
+        const [selectedQuestion, setSelectedQuestion] = useState(null);
+        const [loading, setLoading] = useState(false);
+        const [answer, setAnswer] = useState('');
+
+        const questions = [
+                { id: 1, text: 'What is prime shippa?' },
+                { id: 2, text: 'How much does the company own from branches with addresses?' },
+                { id: 3, text: 'What is the mechanism for receiving and delivering the shipment?' },
+                { id: 4, text: 'Inquire about a particular shipment?' },
+                { id: 5, text: 'Close the conversation' },
+
+        ];
+
+        const handleStart = () => {
+                setShowQuestions(true);
+        };
+
+        const handleQuestionSelect = (question) => {
+                setSelectedQuestion(question);
+                setLoading(true);
+
+                setTimeout(() => {
+                        switch (question.id) {
+                                case 1: {
+                                        setAnswer('Is a shipping company specializing in cargo transfers between its branches located in the UAE, The company was founded in 2018 and is one of the startups in this field to carry out logistics operations on shipments that need to be transported from receipt, storage, transportation and delivery');
+                                        break;
+                                }
+                                case 2: {
+                                        setAnswer(
+                                                <div>
+                                                        The company has three branches in three different cities in the UAE: <br />
+                                                        Name: Abu Dhabi Branch <br />
+                                                        Location:<br />
+                                                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7225.196091619209!2d54.37028892547642!3d24.47645607204847!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5e66fd0e213d97%3A0xbde6320ab658c40e!2sAbu%20Dhabi%20Branch!5e0!3m2!1sen!2sae!4v1648877846752!5m2!1sen!2sae" width="600" height="450" style={{ border: 0 }} allowFullScreen="" loading="lazy"></iframe><br />
+                                                        Name: Sharjah Branch <br />
+                                                        Location:<br />
+                                                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2313.8254439619113!2d55.40526171610472!3d25.274244311972497!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f5e37a1a23f13%3A0x4a1e1416f06b89f4!2sSharjah%20Branch!5e0!3m2!1sen!2sae!4v1648877897892!5m2!1sen!2sae" width="600" height="450" style={{ border: 0 }} allowFullScreen="" loading="lazy"></iframe><br />
+                                                        Name: Al Ain Branch <br />
+                                                        Location:<br />
+                                                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11505.252916736474!2d55.72079707095389!3d24.215249930759437!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ef56fd30b2c9c11%3A0x4ad13fb56b8a5646!2sAl%20Ain%20Branch!5e0!3m2!1sen!2sae!4v1648877930677!5m2!1sen!2sae" width="600" height="450" style={{ border: 0 }} allowFullScreen="" loading="lazy"></iframe><br />
+                                                </div>
+                                        );
+                                        break;
+                                }
+
+                                case 3: {
+                                        break;
+                                }
+                                case 5: {
+                                        setLoading(false);
+                                        setSelectedQuestion(null);
+                                        setAnswer('');
+                                        setShowQuestions(false);
+                                        break;
+                                }
+                                default: {
+                                        setLoading(false);
+                                        setSelectedQuestion(null);
+                                        break;
+                                }
+                        }
+                        setLoading(false);
+                }, 1700);
+        };
+
+        return (
+                <Box sx={{
+                        minHeight: '100vh',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                }}>
+                        <Header />
+                        {/* <Lottie animationData={animationData} autoplay loop style={{
+                                alignItems: 'center', width: 150, height: 150
+                        }} /> */}
+
+                        {showQuestions && !selectedQuestion && (
+                                <>
+                                        {/* <Typography typography={typography.body1}>Select a question:</Typography> */}
+                                        <Box sx={{
+                                                pt: 10,
+                                                width: "85%",
+                                                position: 'fixed',
+                                                bottom: 10
+                                        }}>
+                                                {questions.map(question => (
+                                                        <MainButton
+                                                                key={question.id}
+                                                                title={question.text}
+                                                                colorTitle={colors.white.main}
+                                                                backgroundColor={colors.gradients.info.state}
+                                                                hoverBackgroundColor={colors.gradients.info.main}
+                                                                onClick={() => handleQuestionSelect(question)}
+                                                                height="10%"
+                                                                width="99%"
+                                                                isLoading={loading ? true : false}
+                                                        />
+
+                                                ))}
+                                        </Box>
+
+                                </>
+                        )}
+
+                        {selectedQuestion && (
+                                <Box sx={{
+                                        pt: 10,
+                                        width: "85%",
+                                        bottom: 10
+                                }} >
+                                        {loading ? (
+                                                <LoaderCard />
+                                        ) : (
+                                                <>
+                                                        {answer &&
+                                                                <Box
+                                                                        sx={{
+                                                                                // bottom: 50,
+                                                                                // position: 'absolute',
+                                                                                padding: '10px',
+                                                                                display: 'flex',
+                                                                                alignItems: 'center'
+                                                                        }}>
+                                                                        <Avatar
+                                                                                src={logo}
+                                                                                sx={{
+                                                                                        ml: 2,
+                                                                                        p: 0.7,
+                                                                                        backgroundColor: colors.grey[200],
+                                                                                        marginRight: 2,
+                                                                                        width: 35,
+                                                                                        height: 35
+                                                                                }}
+                                                                        />
+                                                                        <Box
+                                                                                sx={{
+                                                                                        borderRadius: '25px 10px 10px 0px',
+                                                                                        backgroundColor: colors.gradients.warning.state,
+                                                                                        color: colors.white.main,
+                                                                                        maxWidth: '70%',
+                                                                                        padding: '10px',
+                                                                                        marginBottom: '10px',
+                                                                                        display: 'flex',
+                                                                                        flexDirection: 'column',
+                                                                                        alignItems: 'flex-start'
+                                                                                }}
+                                                                        >
+                                                                                <Typography typography={typography.body2}>{answer}</Typography>
+                                                                        </Box>
+                                                                </Box>
+                                                        }
+                                                        <Box sx={{
+                                                                width: "10%",
+                                                                display: 'flex',
+                                                                justifyContent: 'flex-end',
+                                                                position: 'fixed',
+                                                                bottom: 10,
+                                                                right: 10,
+
+                                                        }}>
+                                                                <MainButton
+                                                                        borderRadius={10}
+                                                                        title={"Back"}
+                                                                        colorTitle={colors.white.main}
+                                                                        backgroundColor={colors.gradients.info.state}
+                                                                        hoverBackgroundColor={colors.gradients.info.main}
+                                                                        onClick={() => setSelectedQuestion(null)}
+                                                                        height="50%"
+                                                                        width="100%"
+                                                                />
+                                                        </Box>
+                                                </>
+                                        )}
+                                </Box>
+                        )}
+
+                        {!showQuestions && (
+                                <Box sx={{
+                                        pt: 10,
+                                        width: "85%",
+                                        position: 'fixed',
+                                        bottom: 10
+                                }}> <MainButton
+                                                title="Start"
+                                                colorTitle={colors.white.main}
+                                                backgroundColor={colors.gradients.info.state}
+                                                hoverBackgroundColor={colors.gradients.info.main}
+                                                onClick={handleStart}
+                                                height="10%"
+                                                width="100%"
+                                        />
+                                </Box>)}
+
+
+                </Box>
+        );
+}
+
+export default ChatBot;
