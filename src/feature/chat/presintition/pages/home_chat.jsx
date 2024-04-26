@@ -85,19 +85,20 @@ function ChatBot() {
                         alignItems: 'center',
                 }}>
                         <Header />
-                        {/* <Lottie animationData={animationData} autoplay loop style={{
-                                alignItems: 'center', width: 150, height: 150
-                        }} /> */}
+
 
                         {showQuestions && !selectedQuestion && (
                                 <>
-                                        {/* <Typography typography={typography.body1}>Select a question:</Typography> */}
                                         <Box sx={{
                                                 pt: 10,
                                                 width: "85%",
                                                 position: 'fixed',
-                                                bottom: 10
+                                                bottom: 10,
+                                                justifyContent: 'center',
+                                                textAlign: 'center'
                                         }}>
+                                                {/* <Typography typography={typography.body1}>Select a question:</Typography> */}
+
                                                 {questions.map(question => (
                                                         <MainButton
                                                                 key={question.id}
@@ -107,8 +108,8 @@ function ChatBot() {
                                                                 hoverBackgroundColor={colors.gradients.info.main}
                                                                 onClick={() => handleQuestionSelect(question)}
                                                                 height="10%"
-                                                                width="99%"
-                                                                isLoading={loading ? true : false}
+                                                                width="100%"
+                                                        // isLoading={loading ? true : false}
                                                         />
 
                                                 ))}
@@ -120,8 +121,9 @@ function ChatBot() {
                         {selectedQuestion && (
                                 <Box sx={{
                                         pt: 10,
-                                        width: "85%",
-                                        bottom: 10
+                                        width: "95%",
+                                        bottom: 0,
+                                        // backgroundColor: 'red'
                                 }} >
                                         {loading ? (
                                                 <LoaderCard />
@@ -130,8 +132,7 @@ function ChatBot() {
                                                         {answer &&
                                                                 <Box
                                                                         sx={{
-                                                                                // bottom: 50,
-                                                                                // position: 'absolute',
+                                                                                width:'100%',
                                                                                 padding: '10px',
                                                                                 display: 'flex',
                                                                                 alignItems: 'center'
@@ -139,7 +140,6 @@ function ChatBot() {
                                                                         <Avatar
                                                                                 src={logo}
                                                                                 sx={{
-                                                                                        ml: 2,
                                                                                         p: 0.7,
                                                                                         backgroundColor: colors.grey[200],
                                                                                         marginRight: 2,
@@ -152,7 +152,7 @@ function ChatBot() {
                                                                                         borderRadius: '25px 10px 10px 0px',
                                                                                         backgroundColor: colors.gradients.warning.state,
                                                                                         color: colors.white.main,
-                                                                                        maxWidth: '70%',
+                                                                                        maxWidth: '60%',
                                                                                         padding: '10px',
                                                                                         marginBottom: '10px',
                                                                                         display: 'flex',
@@ -170,7 +170,7 @@ function ChatBot() {
                                                                 justifyContent: 'flex-end',
                                                                 position: 'fixed',
                                                                 bottom: 10,
-                                                                right: 10,
+                                                                right: 30,
 
                                                         }}>
                                                                 <MainButton

@@ -38,7 +38,7 @@ const Header = () => {
                                                 height: 40
                                         }}
                                 />
-                                <Typography typography={typography.h5} sx={{ color: colors.white.main }}>Prime Shippa Company</Typography>
+                                <Typography typography={typography.d6} sx={{fontSize: '25px', color: colors.white.main }}>Prime Shippa Company</Typography>
 
                         </Box>
                         <Box>
