@@ -57,6 +57,23 @@ function ChatBot() {
                                 }
 
                                 case 3: {
+                                        setAnswer(
+                                                <div>
+                                                        Receipt of shipment:<br />
+                                                        Firstly Customer's Arrival <br />
+                                                        - Enter the shipment into their phases:<br />
+                                                        - Introduction of shipment type and capacity "by container" and verification as possible<br />
+                                                        Storage in branch warehouses is moved to phase II<br />
+                                                        - The remaining shipment information is entered.<br />
+                                                        <br />
+                                                        Receipt from another branch  <br />
+                                                        After the shipment arrives at the other branch, the receptionists confirm the receipt process  <br />
+                                                        Cargo and guide the driver verbally to the specified warehouse  <br />
+                                                        The warehouse supervisor reviews shipments that need to be entered  <br />
+                                                        Then the driver scans the shipment and then it is cleared by the warehouse supervisor  <br />
+                                                        The customer is contacted to inform him of the arrival of the shipment  <br />
+                                                </div>
+                                        )
                                         break;
                                 }
                                 case 5: {
@@ -86,7 +103,6 @@ function ChatBot() {
                 }}>
                         <Header />
 
-
                         {showQuestions && !selectedQuestion && (
                                 <>
                                         <Box sx={{
@@ -109,7 +125,7 @@ function ChatBot() {
                                                                 onClick={() => handleQuestionSelect(question)}
                                                                 height="10%"
                                                                 width="100%"
-                                                        // isLoading={loading ? true : false}
+
                                                         />
 
                                                 ))}
@@ -132,7 +148,7 @@ function ChatBot() {
                                                         {answer &&
                                                                 <Box
                                                                         sx={{
-                                                                                width:'100%',
+                                                                                width: '100%',
                                                                                 padding: '10px',
                                                                                 display: 'flex',
                                                                                 alignItems: 'center'
@@ -205,8 +221,6 @@ function ChatBot() {
                                                 width="100%"
                                         />
                                 </Box>)}
-
-
                 </Box>
         );
 }
