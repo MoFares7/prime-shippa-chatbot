@@ -1,11 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../../core/network/api';
+import axios from 'axios';
 
 export const getAnswer = createAsyncThunk(
         'answer/getAnswer',
         async ({ questionId }) => {
                 try {
-                        const response = await api.get(`answers?questionId=${questionId}`);
+                        const response = await axios.get(`https://chat-bot-servies.onrender.com/api/answers?questionId=${questionId}`);
                         return response.data;
                 } catch (error) {
                         throw new Error('Failed to fetch answers');

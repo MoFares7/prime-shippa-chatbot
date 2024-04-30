@@ -1,4 +1,4 @@
-import React, {useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, Avatar } from '@mui/material';
 import colors from '../../../../assets/theme/base/colors';
 import typography from '../../../../assets/theme/base/typography';
@@ -15,7 +15,7 @@ function ChatBot() {
         const [loading, setLoading] = useState(false);
         const [answer, setAnswer] = useState('');
         const [maps, setMaps] = useState(false);
-        const [questions, setQuestions] = useState([]); 
+        const [questions, setQuestions] = useState([]);
 
         const dispatch = useDispatch();
 
@@ -31,7 +31,7 @@ function ChatBot() {
         };
 
         useEffect(() => {
-                fetchQuestions(); 
+                fetchQuestions();
         }, []);
 
         const handleStart = () => {
@@ -87,27 +87,31 @@ function ChatBot() {
 
                         {showQuestions && !selectedQuestion && (
                                 <>
-                                        <Box sx={{
-                                                pt: 10,
-                                                width: "85%",
-                                                position: 'fixed',
-                                                bottom: 10,
-                                                justifyContent: 'center',
-                                                textAlign: 'center'
-                                        }}>
-                                                {questions.map(question => (
-                                                        <MainButton
-                                                                key={question.id}
-                                                                title={question.text}
-                                                                colorTitle={colors.white.main}
-                                                                backgroundColor={colors.gradients.info.state}
-                                                                hoverBackgroundColor={colors.gradients.info.main}
-                                                                onClick={() => handleQuestionSelect(question)}
-                                                                height="10%"
-                                                                width="100%"
-                                                        />
-                                                ))}
-                                        </Box>
+                                        {loadingQuestion ?
+                                                <LoaderCard />
+                                                :
+                                                <Box sx={{
+                                                        pt: 10,
+                                                        width: "85%",
+                                                        position: 'fixed',
+                                                        bottom: 10,
+                                                        justifyContent: 'center',
+                                                        textAlign: 'center'
+                                                }}>
+                                                        {questions.map(question => (
+                                                                <MainButton
+                                                                        key={question.id}
+                                                                        title={question.question}
+                                                                        colorTitle={colors.white.main}
+                                                                        backgroundColor={colors.gradients.info.state}
+                                                                        hoverBackgroundColor={colors.gradients.info.main}
+                                                                        onClick={() => handleQuestionSelect(question)}
+                                                                        height="10%"
+                                                                        width="100%"
+                                                                />
+                                                        ))}
+                                                </Box>
+                                        }
                                 </>
                         )}
 
@@ -140,7 +144,8 @@ function ChatBot() {
                                                                                                         backgroundColor: colors.grey[200],
                                                                                                         marginRight: 2,
                                                                                                         width: 35,
-                                                                                                        height: 35                                                               }}
+                                                                                                        height: 35
+                                                                                                }}
                                                                                         />
                                                                                         <Box
                                                                                                 sx={{

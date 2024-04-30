@@ -1,14 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '../../../core/network/api';
+import axios from 'axios';
 
 export const getQuestions = createAsyncThunk(
-        '/question/index',
+        'answers/index',
         async () => {
                 try {
-                        const response = await api.get('question/index');
+                        const response = await axios.get(`https://chat-bot-servies.onrender.com/api/answers/index`);
                         return response.data;
                 } catch (error) {
-                        throw new Error('Failed to fetch questions');
+                        throw Error(error);
                 }
         }
 );
@@ -17,8 +17,8 @@ const getQuestionsSlice = createSlice({
         name: 'getQuestions',
         initialState: {
                 data: [],
-                loading: false,
                 error: null,
+                loading: false,
         },
         reducers: {},
         extraReducers: (builder) => {
@@ -29,7 +29,6 @@ const getQuestionsSlice = createSlice({
                         })
                         .addCase(getQuestions.fulfilled, (state, action) => {
                                 state.loading = false;
-                                state.error = null;
                                 state.data = action.payload;
                         })
                         .addCase(getQuestions.rejected, (state, action) => {
