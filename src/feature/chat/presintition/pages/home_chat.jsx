@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Avatar } from '@mui/material';
+import { Box, Typography, Avatar, TextField } from '@mui/material';
 import colors from '../../../../assets/theme/base/colors';
 import typography from '../../../../assets/theme/base/typography';
 import logo from '../../../../assets/images/logo-ct.png';
@@ -9,6 +9,9 @@ import LoaderCard from '../../../../components/loader';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAnswer } from '../../services/get_answer_service';
 import { getQuestions } from '../../services/get_question_service';
+import MDTextFeild from '../../../../items/MDTextFeild/textfeild';
+import welcome from '../../../../assets/lottie/welcome.json';
+
 function ChatBot() {
         const [showQuestions, setShowQuestions] = useState(false);
         const [selectedQuestion, setSelectedQuestion] = useState(null);
@@ -16,6 +19,7 @@ function ChatBot() {
         const [answer, setAnswer] = useState('');
         const [maps, setMaps] = useState(false);
         const [questions, setQuestions] = useState([]);
+        const [isQuery, setIsQuery] = useState(false);
 
         const dispatch = useDispatch();
 
@@ -61,7 +65,13 @@ function ChatBot() {
                                         </div>
                                 );
 
-                        } else {
+                        }
+                        if (question.id === 4) {
+                                setAnswer('');
+                                setIsQuery(true);
+                        }
+
+                        else {
                                 setMaps(false);
                                 const response = await dispatch(getAnswer({ questionId: question.id }));
                                 setAnswer(response.payload);
@@ -85,35 +95,53 @@ function ChatBot() {
                 }}>
                         <Header />
 
-                        {showQuestions && !selectedQuestion && (
-                                <>
-                                        {loadingQuestion ?
-                                                <LoaderCard />
-                                                :
-                                                <Box sx={{
-                                                        pt: 10,
-                                                        width: "85%",
-                                                        position: 'fixed',
-                                                        bottom: 10,
-                                                        justifyContent: 'center',
-                                                        textAlign: 'center'
-                                                }}>
-                                                        {questions.map(question => (
-                                                                <MainButton
-                                                                        key={question.id}
-                                                                        title={question.question}
-                                                                        colorTitle={colors.white.main}
-                                                                        backgroundColor={colors.gradients.info.state}
-                                                                        hoverBackgroundColor={colors.gradients.info.main}
-                                                                        onClick={() => handleQuestionSelect(question)}
-                                                                        height="10%"
-                                                                        width="100%"
-                                                                />
-                                                        ))}
-                                                </Box>
-                                        }
-                                </>
+                        {loadingQuestion && (
+                                <LoaderCard />
                         )}
+
+                        {showQuestions && !selectedQuestion && !loadingQuestion && (
+                                <Box sx={{
+                                        pt: 10,
+                                        width: "85%",
+                                        position: 'fixed',
+                                        bottom: 10,
+                                        justifyContent: 'center',
+                                        textAlign: 'center'
+                                }}>
+                                        {questions.map(question => (
+                                                <MainButton
+                                                        key={question.id}
+                                                        title={question.question}
+                                                        colorTitle={colors.white.main}
+                                                        backgroundColor={colors.gradients.info.state}
+                                                        hoverBackgroundColor={colors.gradients.info.main}
+                                                        onClick={() => handleQuestionSelect(question)}
+                                                        height="10%"
+                                                        width="100%"
+                                                />
+                                        ))}
+                                </Box>
+                        )}
+
+                        {!showQuestions && !loadingQuestion && (
+                                <Box sx={{
+                                        pt: 10,
+                                        width: "85%",
+                                        position: 'fixed',
+                                        bottom: 10
+                                }}>
+                                        <MainButton
+                                                title="Start"
+                                                colorTitle={colors.white.main}
+                                                backgroundColor={colors.gradients.info.state}
+                                                hoverBackgroundColor={colors.gradients.info.main}
+                                                onClick={handleStart}
+                                                height="10%"
+                                                width="100%"
+                                        />
+                                </Box>
+                        )}
+
 
                         {selectedQuestion && (
                                 <Box sx={{
@@ -124,12 +152,63 @@ function ChatBot() {
                                         {loading ? (
                                                 <LoaderCard />
                                         ) : (
-                                                <>
-                                                        {answer && (
-                                                                Array.isArray(answer) ? (
-                                                                        answer.map((item, index) => (
+                                                isQuery ?
+                                                        <Box sx={{
+                                                                width: '100%',
+                                                                position: 'fixed',
+                                                                bottom: 15,
+                                                                // backgroundColor: 'red'
+                                                        }}>
+                                                                <MDTypography typography={typography.body1} pb={1}>
+                                                                        Please Enter Shipment Number
+                                                                </MDTypography>
+                                                                <MDTextFeild />
+                                                        </Box>
+
+                                                        :
+
+                                                        <>
+                                                                {answer && (
+                                                                        Array.isArray(answer) ? (
+                                                                                answer.map((item, index) => (
+                                                                                        <Box
+                                                                                                key={index}
+                                                                                                sx={{
+                                                                                                        width: '100%',
+                                                                                                        padding: '10px',
+                                                                                                        display: 'flex',
+                                                                                                        alignItems: 'center'
+                                                                                                }}
+                                                                                        >
+                                                                                                <Avatar
+                                                                                                        src={logo}
+                                                                                                        sx={{
+                                                                                                                p: 0.7,
+                                                                                                                backgroundColor: colors.grey[200],
+                                                                                                                marginRight: 2,
+                                                                                                                width: 35,
+                                                                                                                height: 35
+                                                                                                        }}
+                                                                                                />
+                                                                                                <Box
+                                                                                                        sx={{
+                                                                                                                borderRadius: '25px 10px 10px 0px',
+                                                                                                                backgroundColor: colors.gradients.warning.state,
+                                                                                                                color: colors.white.main,
+                                                                                                                maxWidth: '60%',
+                                                                                                                padding: '10px',
+                                                                                                                marginBottom: '10px',
+                                                                                                                display: 'flex',
+                                                                                                                flexDirection: 'column',
+                                                                                                                alignItems: 'flex-start'
+                                                                                                        }}
+                                                                                                >
+                                                                                                        <Typography typography={typography.body2}>{item.text}</Typography>
+                                                                                                </Box>
+                                                                                        </Box>
+                                                                                ))
+                                                                        ) : (
                                                                                 <Box
-                                                                                        key={index}
                                                                                         sx={{
                                                                                                 width: '100%',
                                                                                                 padding: '10px',
@@ -160,69 +239,33 @@ function ChatBot() {
                                                                                                         alignItems: 'flex-start'
                                                                                                 }}
                                                                                         >
-                                                                                                <Typography typography={typography.body2}>{item.text}</Typography>
+                                                                                                <Typography typography={typography.body2}>{maps ? answer : answer.text}</Typography>
                                                                                         </Box>
                                                                                 </Box>
-                                                                        ))
-                                                                ) : (
-                                                                        <Box
-                                                                                sx={{
-                                                                                        width: '100%',
-                                                                                        padding: '10px',
-                                                                                        display: 'flex',
-                                                                                        alignItems: 'center'
-                                                                                }}
-                                                                        >
-                                                                                <Avatar
-                                                                                        src={logo}
-                                                                                        sx={{
-                                                                                                p: 0.7,
-                                                                                                backgroundColor: colors.grey[200],
-                                                                                                marginRight: 2,
-                                                                                                width: 35,
-                                                                                                height: 35
-                                                                                        }}
-                                                                                />
-                                                                                <Box
-                                                                                        sx={{
-                                                                                                borderRadius: '25px 10px 10px 0px',
-                                                                                                backgroundColor: colors.gradients.warning.state,
-                                                                                                color: colors.white.main,
-                                                                                                maxWidth: '60%',
-                                                                                                padding: '10px',
-                                                                                                marginBottom: '10px',
-                                                                                                display: 'flex',
-                                                                                                flexDirection: 'column',
-                                                                                                alignItems: 'flex-start'
-                                                                                        }}
-                                                                                >
-                                                                                        <Typography typography={typography.body2}>{maps ? answer : answer.text}</Typography>
-                                                                                </Box>
-                                                                        </Box>
-                                                                )
-                                                        )}
+                                                                        )
+                                                                )}
 
 
-                                                        <Box sx={{
-                                                                width: "10%",
-                                                                display: 'flex',
-                                                                justifyContent: 'flex-end',
-                                                                position: 'fixed',
-                                                                bottom: 10,
-                                                                right: 30,
-                                                        }}>
-                                                                <MainButton
-                                                                        borderRadius={10}
-                                                                        title={"Back"}
-                                                                        colorTitle={colors.white.main}
-                                                                        backgroundColor={colors.gradients.info.state}
-                                                                        hoverBackgroundColor={colors.gradients.info.main}
-                                                                        onClick={() => setSelectedQuestion(null)}
-                                                                        height="50%"
-                                                                        width="100%"
-                                                                />
-                                                        </Box>
-                                                </>
+                                                                <Box sx={{
+                                                                        width: "10%",
+                                                                        display: 'flex',
+                                                                        justifyContent: 'flex-end',
+                                                                        position: 'fixed',
+                                                                        bottom: 10,
+                                                                        right: 30,
+                                                                }}>
+                                                                        <MainButton
+                                                                                borderRadius={10}
+                                                                                title={"Back"}
+                                                                                colorTitle={colors.white.main}
+                                                                                backgroundColor={colors.gradients.info.state}
+                                                                                hoverBackgroundColor={colors.gradients.info.main}
+                                                                                onClick={() => setSelectedQuestion(null)}
+                                                                                height="50%"
+                                                                                width="100%"
+                                                                        />
+                                                                </Box>
+                                                        </>
                                         )}
                                 </Box>
                         )}
@@ -232,8 +275,21 @@ function ChatBot() {
                                         pt: 10,
                                         width: "85%",
                                         position: 'fixed',
-                                        bottom: 10
+                                        bottom: 10,
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        textAlign: 'center',
+
                                 }}>
+                                        <Lottie animationData={welcome} autoplay loop
+                                                style={{
+
+                                                        width: 500,
+                                                        height: 500
+                                                }} />
+
                                         <MainButton
                                                 title="Start"
                                                 colorTitle={colors.white.main}
@@ -261,6 +317,8 @@ export default ChatBot;
 // import MainButton from '../components/main_button';
 // import Header from '../components/header';
 // import LoaderCard from '../../../../components/loader';
+import MDTypography from './../../../../items/MDTypography/index';
+import Lottie from 'lottie-react';
 
 // function ChatBot() {
 //         const [showQuestions, setShowQuestions] = useState(false);
