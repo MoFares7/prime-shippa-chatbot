@@ -1,4 +1,4 @@
-import { Avatar, Box, Typography } from '@mui/material'
+import { Avatar, Box, Button, Typography } from '@mui/material'
 import React from 'react'
 import colors from '../../../../assets/theme/base/colors'
 import typography from '../../../../assets/theme/base/typography'
@@ -6,7 +6,7 @@ import logo from '../../../../assets/images/logo-ct.png';
 import Lottie from 'lottie-react';
 import animationData from '../../../../assets/lottie/bot.json';
 
-const Header = () => {
+const Header = ({ onClick }) => {
         return (
                 <Box sx={{
                         borderRadius: '10px 10px 10px 10px',
@@ -41,9 +41,9 @@ const Header = () => {
                                 <Typography typography={typography.d6} sx={{fontSize: '25px', color: colors.white.main }}>Prime Shippa Company</Typography>
 
                         </Box>
-                        <Box>
+                        <Button onClick={onClick}>
                                 <Lottie animationData={animationData} autoplay loop style={{ alignItems: 'center', width: 75, height: 75 }} />
-                        </Box>
+                        </Button>
                 </Box>
         )
 }
