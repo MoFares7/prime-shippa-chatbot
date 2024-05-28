@@ -3,11 +3,13 @@ import { Avatar, Box, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import colors from '../../../../assets/theme/base/colors';
 import logo from '../../../../assets/images/logo-ct.png';
+import styledComponents, { keyframes } from 'styled-components';
+import { bounceInDown } from 'react-animations';
 
 const ChatBubbleContainer = styled(Box)(({ theme, isSender }) => ({
         display: 'flex',
         justifyContent: isSender ? 'flex-end' : 'flex-start',
-        marginBottom: theme.spacing(-45),
+        marginBottom: theme.spacing(2),
 }));
 
 const ChatBubbleMessage = styled(Box)(({ theme, isSender }) => ({
@@ -18,13 +20,23 @@ const ChatBubbleMessage = styled(Box)(({ theme, isSender }) => ({
                 : `${theme.shape.borderRadius}px ${theme.shape.borderRadius}px 0 ${theme.shape.borderRadius}px`,
         backgroundColor: isSender ? colors.gradients.warning.main : colors.gradients.success.main,
         color: colors.white.main,
-        backgroundColor: colors.gradients.warning.state,
         padding: '10px',
         marginBottom: '10px',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'flex-start'
+        alignItems: 'flex-start',
+        transition: 'transform 0.3s, box-shadow 0.3s',
+        '&:hover': {
+                transform: 'scale(1.05)',
+                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+        }
 }));
+
+const bounceInDownAnimation = keyframes`${bounceInDown}`;
+
+const BounceInDown = styledComponents.div`
+    animation: 2s ${bounceInDownAnimation};
+`;
 
 const ChatBubble = ({ message, isSender }) => (
         <ChatBubbleContainer isSender={isSender}>
@@ -37,10 +49,12 @@ const ChatBubble = ({ message, isSender }) => (
                                 width: 50,
                                 height: 50
                         }}
-                />  <ChatBubbleMessage isSender={isSender}>
-
-                        <Typography variant="body2" sx={{ textAlign: 'center' }}>{message}</Typography>
-                </ChatBubbleMessage>
+                />
+                <BounceInDown>
+                        <ChatBubbleMessage isSender={isSender}>
+                                <Typography variant="body2" sx={{ textAlign: 'center' }}>{message}</Typography>
+                        </ChatBubbleMessage>
+                </BounceInDown>
         </ChatBubbleContainer>
 );
 
