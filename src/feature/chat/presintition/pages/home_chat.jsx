@@ -18,6 +18,8 @@ import { getMyShipment } from '../../services/get_my_shipment_service';
 import ChatBubble from '../components/chat_bubble';
 import styled, { keyframes } from 'styled-components';
 import { bounceInDown } from 'react-animations';
+import ShipmentCard from '../components/shipmant_card';
+
 
 function ChatBot() {
         const [showQuestions, setShowQuestions] = useState(false);
@@ -27,10 +29,10 @@ function ChatBot() {
         const [maps, setMaps] = useState(false);
         const [questions, setQuestions] = useState([]);
         const [isQuery, setIsQuery] = useState(false);
+        const [identifier, setIdentifier] = useState('');
 
         const dispatch = useDispatch();
-
-        const { data, loadingQuestion } = useSelector(state => state.getAnswer);
+        const { loadingQuestion } = useSelector(state => state.getAnswer);
 
         const fetchQuestions = async () => {
                 try {
@@ -54,31 +56,10 @@ function ChatBot() {
                 setLoading(true);
 
                 try {
-                        if (question.id === 2) {
-                                console.log("question.id: " + question.id);
-                                setMaps(true);
-                                setAnswer(
-                                        <div>
-                                                The company has three branches in three different cities in the UAE: <br />
-                                                Name: Abu Dhabi Branch <br />
-                                                Location:<br />
-                                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7225.196091619209!2d54.37028892547642!3d24.47645607204847!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5e66fd0e213d97%3A0xbde6320ab658c40e!2sAbu%20Dhabi%20Branch!5e0!3m2!1sen!2sae!4v1648877846752!5m2!1sen!2sae" width="600" height="450" style={{ border: 0 }} allowFullScreen="" loading="lazy"></iframe><br />
-                                                Name: Sharjah Branch <br />
-                                                Location:<br />
-                                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2313.8254439619113!2d55.40526171610472!3d25.274244311972497!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f5e37a1a23f13%3A0x4a1e1416f06b89f4!2sSharjah%20Branch!5e0!3m2!1sen!2sae!4v1648877897892!5m2!1sen!2sae" width="600" height="450" style={{ border: 0 }} allowFullScreen="" loading="lazy"></iframe><br />
-                                                Name: Al Ain Branch <br />
-                                                Location:<br />
-                                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11505.252916736474!2d55.72079707095389!3d24.215249930759437!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ef56fd30b2c9c11%3A0x4ad13fb56b8a5646!2sAl%20Ain%20Branch!5e0!3m2!1sen!2sae!4v1648877930677!5m2!1sen!2sae" width="600" height="450" style={{ border: 0 }} allowFullScreen="" loading="lazy"></iframe><br />
-                                        </div>
-                                );
-
-                        }
                         if (question.id === 4) {
                                 setAnswer('');
                                 setIsQuery(true);
-                        }
-
-                        else {
+                        } else {
                                 setMaps(false);
                                 const response = await dispatch(getAnswer({ questionId: question.id }));
                                 setAnswer(response.payload);
@@ -91,16 +72,32 @@ function ChatBot() {
                 }
         };
 
-        const handleSendIdentiferShipmet = () => {
-                dispatch(getMyShipment());
-        }
+        const handleSearch = () => {
+                dispatch(getMyShipment({ identifier }));
+        };
+
+        const cleanKeys = (obj) => {
+                if (Array.isArray(obj)) {
+                        return obj.map(cleanKeys);
+                } else if (obj !== null && typeof obj === 'object') {
+                        return Object.keys(obj).reduce((acc, key) => {
+                                const cleanKey = key.trim();
+                                acc[cleanKey] = cleanKeys(obj[key]);
+                                return acc;
+                        }, {});
+                }
+                return obj;
+        };
+        const { data, loadingData, error } = useSelector((state) => state.getMyShipment);
+
+        const shipment = data && Array.isArray(data) && data.length > 0 ? data[0] : null;
+        const shipmentIdentifier = shipment ? cleanKeys(shipment) : null;
 
         const bounceInDownAnimation = keyframes`${bounceInDown}`;
 
         const AnimatedCard = styled(Box)`
-    animation: 1s ${bounceInDownAnimation};
-`;
-
+        animation: 1s ${bounceInDownAnimation};
+    `;
 
         return (
                 <Box sx={{
@@ -110,16 +107,9 @@ function ChatBot() {
                         justifyContent: 'center',
                         alignItems: 'center',
                 }}>
+                        <Header onClick={() => setShowQuestions(false)} />
 
-                        <Header
-                                onClick={() => {
-                                        setShowQuestions(false);
-                                }}
-                        />
-
-                        {loadingQuestion && (
-                                <LoaderCard />
-                        )}
+                        {loadingQuestion && <LoaderCard />}
 
                         {showQuestions && !selectedQuestion && !loadingQuestion && (
                                 <Box sx={{
@@ -166,163 +156,178 @@ function ChatBot() {
                                 </Box>
                         )}
 
-                        {
-                                selectedQuestion && (
-                                        <Box sx={{
-                                                pt: 10,
-                                                width: "95%",
-                                                bottom: 0,
-
-                                        }} >
-                                                {loading ? (
-                                                        <LoaderCard />
-                                                ) : (
-                                                        isQuery ?
-                                                                <>
-
+                        {selectedQuestion && (
+                                <Box sx={{
+                                        pt: 10,
+                                        width: "95%",
+                                        bottom: 0,
+                                }}>
+                                        {loading ? (
+                                                <LoaderCard />
+                                        ) : (
+                                                isQuery ?
+                                                        <Box>
+                                                                <Box sx={{
+                                                                        display: 'flex',
+                                                                        justifyContent: 'center',
+                                                                        alignItems: 'center',
+                                                                        flexDirection: 'column',
+                                                                }}>
                                                                         <Box sx={{
-                                                                                display: 'flex',
-                                                                                justifyContent: 'center',
-                                                                                alignItems: 'center',
-                                                                                flexDirection: 'column',
+
                                                                         }}>
-                                                                                <Lottie animationData={world} autoPlay style={{
-                                                                                        width: 320,
-                                                                                        height: 320,
-                                                                                        textAlign: 'center', justifyContent: 'center', alignContent: 'center'
-                                                                                }}
-                                                                                />
-                                                                        </Box>
-                                                                        <Box sx={{
-                                                                                width: '100%',
-                                                                                position: 'fixed',
-                                                                                bottom: 65,
-                                                                        }}>
-                                                                                <MDTypography typography={typography.body1} pb={1}>
-                                                                                        Please Enter Shipment Number
-                                                                                </MDTypography>
-                                                                                <MDTextFeild
-                                                                                        value={''}
-                                                                                        onClick={handleSendIdentiferShipmet}
-                                                                                />
-                                                                        </Box>
-                                                                        <Box sx={{
-                                                                                width: "10%",
-                                                                                display: 'flex',
-                                                                                justifyContent: 'flex-end',
-                                                                                position: 'fixed',
-                                                                                bottom: 10,
-                                                                                left: 30,
-                                                                        }}>
-                                                                                <MainButton
-                                                                                        borderRadius={10}
-                                                                                        title={"Back"}
-                                                                                        colorTitle={colors.white.main}
-                                                                                        backgroundColor={colors.gradients.info.state}
-                                                                                        hoverBackgroundColor={colors.gradients.info.main}
-                                                                                        onClick={() => {
-                                                                                                setSelectedQuestion(null)
-                                                                                                setIsQuery(false)
-                                                                                        }}
-                                                                                        height="50%"
-                                                                                        width="100%"
-                                                                                />
-                                                                        </Box>
-                                                                </>
 
-                                                                :
-
-                                                                <>
-                                                                        {answer && (
-                                                                                Array.isArray(answer) ? (
-                                                                                        answer.map((item, index) => (
-                                                                                                <Box
-                                                                                                        key={index}
-                                                                                                        sx={{
-                                                                                                                width: '100%',
-                                                                                                                padding: '10px',
-                                                                                                                display: 'flex',
-                                                                                                                alignItems: 'center',
-                                                                                                        }}
-                                                                                                >
-
-                                                                                                        <ChatBubble key={index} message={item.text} isSender={true} />
-
-                                                                                                </Box>
-                                                                                        ))
+                                                                                {loadingData ? (
+                                                                                        <LoaderCard />
+                                                                                ) : !shipmentIdentifier ? (
+                                                                                        <Lottie animationData={world} autoPlay style={{
+                                                                                                width: 320,
+                                                                                                height: 320,
+                                                                                                textAlign: 'center', justifyContent: 'center', alignContent: 'center'
+                                                                                        }} />
                                                                                 ) : (
+                                                                                        <ShipmentCard
+                                                                                                isSearch={true}
+                                                                                                key={shipmentIdentifier.id}
+                                                                                                shipmentCapacity={shipmentIdentifier.capacity}
+                                                                                                shipmentName={shipmentIdentifier.name}
+                                                                                                shipmentStatus={shipmentIdentifier.status}
+                                                                                                shipmentIdentifier={shipmentIdentifier.identifier}
+                                                                                                shipmentCategoryType={shipmentIdentifier.category_id?.name}
+                                                                                                shipmentReceiverBranchName={shipmentIdentifier.receiver_branch_id?.name}
+                                                                                                colorShipmentState={colors.success.main}
+                                                                                        />
+                                                                                )}
+
+                                                                        </Box>
+
+                                                                </Box>
+                                                                <Box sx={{
+                                                                        width: '100%',
+                                                                        position: 'fixed',
+                                                                        bottom: 65,
+                                                                }}>
+                                                                        <MDTypography typography={typography.body1} pb={1}>
+                                                                                Please Enter Shipment Number
+                                                                        </MDTypography>
+                                                                        <MDTextFeild
+                                                                                value={identifier}
+                                                                                onClick={handleSearch}
+                                                                                onChange={(e) => setIdentifier(e.target.value)}
+                                                                        />
+                                                                </Box>
+                                                                <Box sx={{
+                                                                        width: "10%",
+                                                                        display: 'flex',
+                                                                        justifyContent: 'flex-end',
+                                                                        position: 'fixed',
+                                                                        bottom: 10,
+                                                                        left: 30,
+                                                                }}>
+                                                                        <MainButton
+                                                                                borderRadius={10}
+                                                                                title={"Back"}
+                                                                                colorTitle={colors.white.main}
+                                                                                backgroundColor={colors.gradients.info.state}
+                                                                                hoverBackgroundColor={colors.gradients.info.main}
+                                                                                onClick={() => {
+                                                                                        setSelectedQuestion(null)
+                                                                                        setIsQuery(false)
+                                                                                }}
+                                                                                height="50%"
+                                                                                width="100%"
+                                                                        />
+                                                                </Box>
+
+
+                                                        </Box>
+                                                        :
+                                                        <>
+                                                                {answer && (
+                                                                        Array.isArray(answer) ? (
+                                                                                answer.map((item, index) => (
                                                                                         <Box
+                                                                                                key={index}
                                                                                                 sx={{
                                                                                                         width: '100%',
                                                                                                         padding: '10px',
                                                                                                         display: 'flex',
-                                                                                                        alignItems: 'center'
+                                                                                                        alignItems: 'center',
                                                                                                 }}
                                                                                         >
-                                                                                                <Avatar
-                                                                                                        src={logo}
-                                                                                                        sx={{
-                                                                                                                p: 0.7,
-                                                                                                                backgroundColor: colors.grey[200],
-                                                                                                                marginRight: 2,
-                                                                                                                width: 35,
-                                                                                                                height: 35
-                                                                                                        }}
-                                                                                                />
-                                                                                                <Box
-                                                                                                        sx={{
-                                                                                                                borderRadius: '25px 10px 10px 0px',
-                                                                                                                backgroundColor: colors.gradients.warning.state,
-                                                                                                                color: colors.white.main,
-                                                                                                                maxWidth: '60%',
-                                                                                                                padding: '10px',
-                                                                                                                marginBottom: '10px',
-                                                                                                                display: 'flex',
-                                                                                                                flexDirection: 'column',
-                                                                                                                alignItems: 'flex-start'
-                                                                                                        }}
-                                                                                                >
-                                                                                                        <Typography typography={typography.body2}>{maps ? answer : answer.text}</Typography>
-                                                                                                </Box>
+                                                                                                <ChatBubble key={index} message={item.text} isSender={true} />
                                                                                         </Box>
-                                                                                )
-                                                                        )}
+                                                                                ))
+                                                                        ) : (
+                                                                                <Box
+                                                                                        sx={{
+                                                                                                width: '100%',
+                                                                                                padding: '10px',
+                                                                                                display: 'flex',
+                                                                                                alignItems: 'center'
+                                                                                        }}
+                                                                                >
+                                                                                        <Avatar
+                                                                                                src={logo}
+                                                                                                sx={{
+                                                                                                        p: 0.7,
+                                                                                                        backgroundColor: colors.grey[200],
+                                                                                                        marginRight: 2,
+                                                                                                        width: 35,
+                                                                                                        height: 35
+                                                                                                }}
+                                                                                        />
+                                                                                        <Box
+                                                                                                sx={{
+                                                                                                        borderRadius: '25px 10px 10px 0px',
+                                                                                                        backgroundColor: colors.gradients.warning.state,
+                                                                                                        color: colors.white.main,
+                                                                                                        maxWidth: '60%',
+                                                                                                        padding: '10px',
+                                                                                                        marginBottom: '10px',
+                                                                                                        display: 'flex',
+                                                                                                        flexDirection: 'column',
+                                                                                                        alignItems: 'flex-start'
+                                                                                                }}
+                                                                                        >
+                                                                                                <Typography typography={typography.body2}>{maps ? answer : answer.text}</Typography>
+                                                                                        </Box>
+                                                                                </Box>
+                                                                        )
+                                                                )}
+                                                                <Box sx={{
+                                                                        width: "10%",
+                                                                        display: 'flex',
+                                                                        justifyContent: 'flex-end',
+                                                                        position: 'fixed',
+                                                                        bottom: 10,
+                                                                        right: 30,
+                                                                }}>
+                                                                        <MainButton
+                                                                                borderRadius={10}
+                                                                                title={"Back"}
+                                                                                colorTitle={colors.white.main}
+                                                                                backgroundColor={colors.gradients.info.state}
+                                                                                hoverBackgroundColor={colors.gradients.info.main}
+                                                                                onClick={() => setSelectedQuestion(null)}
+                                                                                height="50%"
+                                                                                width="100%"
+                                                                        />
+                                                                </Box>
+                                                        </>
+                                        )}
+                                </Box>
+                        )}
+
+                        {!showQuestions && !selectedQuestion && (
+                                <WelcomeCard handleStart={handleStart} />
+                        )}
 
 
-                                                                        <Box sx={{
-                                                                                width: "10%",
-                                                                                display: 'flex',
-                                                                                justifyContent: 'flex-end',
-                                                                                position: 'fixed',
-                                                                                bottom: 10,
-                                                                                right: 30,
-                                                                        }}>
-                                                                                <MainButton
-                                                                                        borderRadius={10}
-                                                                                        title={"Back"}
-                                                                                        colorTitle={colors.white.main}
-                                                                                        backgroundColor={colors.gradients.info.state}
-                                                                                        hoverBackgroundColor={colors.gradients.info.main}
-                                                                                        onClick={() => setSelectedQuestion(null)}
-                                                                                        height="50%"
-                                                                                        width="100%"
-                                                                                />
-                                                                        </Box>
-                                                                </>
-                                                )}
-                                        </Box>
-                                )
-                        }
 
-                        {
-                                !showQuestions && (
-                                        <WelcomeCard
-                                                handleStart={handleStart}
-                                        />
-                                )
-                        }
-                </Box >
+                </Box>
         );
 }
 
 export default ChatBot;
+

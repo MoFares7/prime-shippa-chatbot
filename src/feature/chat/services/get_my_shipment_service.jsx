@@ -4,10 +4,10 @@ import axios from 'axios';
 const BASEURL = 'https://prime-shippa-api.point-dev.net/api/';
 
 export const getMyShipment = createAsyncThunk(
-        'branch/store',
+        'shipment/identifier',
         async ({ identifier }, { rejectWithValue }) => {
                 try {
-                        const response = await axios.post(`${BASEURL}shipment/identifier/${identifier}`);
+                        const response = await axios.get(`${BASEURL}shipment/identifier/${identifier}`);
                         console.log("getMyShipment success: ", response.data);
 
                         return response.data;
