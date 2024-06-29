@@ -179,25 +179,30 @@ function ChatBot() {
 
                                                                                 {loadingData ? (
                                                                                         <LoaderCard />
-                                                                                ) : !shipmentIdentifier ? (
-                                                                                        <Lottie animationData={world} autoPlay style={{
-                                                                                                width: 320,
-                                                                                                height: 320,
-                                                                                                textAlign: 'center', justifyContent: 'center', alignContent: 'center'
-                                                                                        }} />
-                                                                                ) : (
-                                                                                        <ShipmentCard
-                                                                                                isSearch={true}
-                                                                                                key={shipmentIdentifier.id}
-                                                                                                shipmentCapacity={shipmentIdentifier.capacity}
-                                                                                                shipmentName={shipmentIdentifier.name}
-                                                                                                shipmentStatus={shipmentIdentifier.status}
-                                                                                                shipmentIdentifier={shipmentIdentifier.identifier}
-                                                                                                shipmentCategoryType={shipmentIdentifier.category_id?.name}
-                                                                                                shipmentReceiverBranchName={shipmentIdentifier.receiver_branch_id?.name}
-                                                                                                colorShipmentState={colors.success.main}
-                                                                                        />
-                                                                                )}
+                                                                                ) :
+                                                                                        !shipmentIdentifier ? (
+                                                                                                <Box sx={{ textAlign: 'center' }}>
+                                                                                                        <Lottie animationData={world} autoPlay style={{
+                                                                                                                width: 320,
+                                                                                                                height: 320,
+                                                                                                                textAlign: 'center', justifyContent: 'center', alignContent: 'center'
+                                                                                                        }} />
+                                                                                                        <Typography>Not Found Shipment</Typography>
+                                                                                                </Box>
+
+                                                                                        ) : (
+                                                                                                <ShipmentCard
+                                                                                                        isSearch={true}
+                                                                                                        key={shipmentIdentifier.id}
+                                                                                                        shipmentCapacity={shipmentIdentifier.capacity}
+                                                                                                        shipmentName={shipmentIdentifier.name}
+                                                                                                        shipmentStatus={shipmentIdentifier.status}
+                                                                                                        shipmentIdentifier={shipmentIdentifier.identifier}
+                                                                                                        shipmentCategoryType={shipmentIdentifier.category_id?.name}
+                                                                                                        shipmentReceiverBranchName={shipmentIdentifier.receiver_branch_id?.name}
+                                                                                                        colorShipmentState={colors.success.main}
+                                                                                                />
+                                                                                        )}
 
                                                                         </Box>
 
